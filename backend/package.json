@@ -19,10 +19,16 @@
     "dev": "node --watch server.js"
   },
   "dependencies": {
-    "express": "^5.1.0"
+    "axios": "^1.12.2",
+    "bcrypt": "^6.0.0",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.18.1"
   },
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
     "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.4.0",
     "typescript": "^5.9.2"
   }
