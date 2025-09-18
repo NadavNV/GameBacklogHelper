@@ -1,2 +1,15 @@
-node_modules
+# Compiled JS files (backend)
+dist/
+build/
+*.js
+*.js.map
+
+# Node modules
+node_modules/
+
+# Build output (frontend)
+.next/
+out/
+
+# Environment files
 .env

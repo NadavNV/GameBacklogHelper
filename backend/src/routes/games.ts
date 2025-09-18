@@ -1,35 +1,28 @@
 import { Router } from "express";
-import { Game } from "../models/Game.js";
-import type { AuthRequest } from "../middleware/auth.js";
 import { authMiddleware } from "../middleware/auth.js";
-import { fetchMetacriticScore } from "../services/rawgService.js";
+import {
+  addGameHandler,
+  getGamesHandler,
+  deleteGameHandler,
+  updateStatusHandler,
+  suggestGamesHandler,
+} from "../handlers/gameHandlers.js";
 
 const router = Router();
 
 // Add a game to the collection
-router.post("/", authMiddleware, async (req: AuthRequest, res) => {
-  try {
-    const { title, status, platform } = req.body;
-
-    const criticScore = await fetchMetacriticScore(title, platform);
-
-    const game = new Game({
-      title,
-      status,
-      platform,
-      criticScore,
-      userId: req.userId,
-    });
-
-    await game.save();
-    res.json(game);
-  } catch (err) {
-    res.status(400).json({ message: "Error creating game", error: err });
-  }
-});
+router.post("/", authMiddleware, addGameHandler);
 
 // Get all games for logged-in user
-router.get("/", authMiddleware, async (req: AuthRequest, res) => {
-  const games = await Game.find({ userId: req.userId });
-  res.json(games);
-});
+router.get("/", authMiddleware, getGamesHandler);
+
+// Remove a game from the collection
+router.delete("/", authMiddleware, deleteGameHandler);
+
+// Change the status of a game
+router.post("/", authMiddleware, updateStatusHandler);
+
+// Suggest up to 5 games to play based on the given parameters
+router.get("/suggest", authMiddleware, suggestGamesHandler);
+
+export default router;

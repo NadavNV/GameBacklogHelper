@@ -5,6 +5,7 @@ import { PLATFORMS } from "../constants/platforms.js";
 export interface IGame extends Document {
   title: string;
   status: "backlog" | "playing" | "finished" | "abandoned";
+  length: "short" | "medium" | "long" | "not-available";
   platform: PlatformName;
   metacriticScore?: number;
   userId: Types.ObjectId; // reference to User
@@ -16,6 +17,11 @@ const gameSchema = new Schema<IGame>({
     type: String,
     enum: ["backlog", "playing", "finished", "abandoned"],
     default: "backlog",
+  },
+  length: {
+    type: String,
+    enum: ["short", "medium", "long", "not-available"],
+    default: "not-available",
   },
   platform: {
     type: String,
