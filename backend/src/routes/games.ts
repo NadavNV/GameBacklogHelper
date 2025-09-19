@@ -1,12 +1,12 @@
 import { Router } from "express";
-import { authMiddleware } from "../middleware/auth.js";
+import { authMiddleware } from "../middleware/authMiddleware";
 import {
   addGameHandler,
   getGamesHandler,
   deleteGameHandler,
   updateStatusHandler,
   suggestGamesHandler,
-} from "../handlers/gameHandlers.js";
+} from "../controllers/gameController";
 
 const router = Router();
 

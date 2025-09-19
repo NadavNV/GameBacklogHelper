@@ -1,6 +1,6 @@
 import { Schema, model, Document, Types } from "mongoose";
-import type { PlatformName } from "../constants/platforms.js";
-import { PLATFORMS } from "../constants/platforms.js";
+import type { PlatformName } from "../constants/platforms";
+import { PLATFORMS } from "../constants/platforms";
 
 export interface IGame extends Document {
   title: string;

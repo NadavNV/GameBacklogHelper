@@ -1,7 +1,7 @@
 import type { RequestHandler, Request, Response } from "express";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import { User } from "../models/User.js";
+import * as bcrypt from "bcrypt";
+import * as jwt from "jsonwebtoken";
+import { User } from "../models/User";
 
 const JWT_SECRET = process.env.JWT_SECRET || "changeme";
 
@@ -13,6 +13,7 @@ export const registerHandler: RequestHandler = async (
     const { username, email, password } = req.body;
 
     if (!username || !email || !password) {
+      console.error("Missing required fields");
       res.status(400).json({ message: "Missing required fields" });
       return;
     }
@@ -20,6 +21,7 @@ export const registerHandler: RequestHandler = async (
     // Check for duplicates
     const existing = await User.findOne({ $or: [{ username }, { email }] });
     if (existing) {
+      console.error("Username or email already in use");
       res.status(400).json({ message: "Username or email already in use" });
       return;
     }
@@ -35,6 +37,7 @@ export const registerHandler: RequestHandler = async (
 
     res.status(201).json({ token });
   } catch (err) {
+    console.error("Error registering user:", err);
     res.status(500).json({ message: "Error registering user", error: err });
   }
 };
@@ -47,6 +50,7 @@ export const loginHandler: RequestHandler = async (
     // identifier can be either email or username
     const { identifier, password } = req.body;
     if (!identifier || !password) {
+      console.error("Missing required fields");
       res.status(400).json({ message: "Missing required fields" });
       return;
     }
@@ -56,6 +60,13 @@ export const loginHandler: RequestHandler = async (
     });
 
     if (!user) {
+      console.error("Invalid credentials");
+      res.status(401).json({ message: "Invalid credentials" });
+      return;
+    }
+
+    const valid = await bcrypt.compare(password, user.passwordHash);
+    if (!valid) {
       res.status(401).json({ message: "Invalid credentials" });
       return;
     }
@@ -64,8 +75,9 @@ export const loginHandler: RequestHandler = async (
       expiresIn: "1h",
     });
 
-    res.json({ token });
+    res.status(200).json({ token });
   } catch (err) {
+    console.error("Error logging in:", err);
     res.status(500).json({ message: "Error logging in", error: err });
   }
 };

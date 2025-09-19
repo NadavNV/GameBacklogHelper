@@ -1,8 +1,8 @@
 import type { Response, NextFunction } from "express";
-import { fetchMetacriticScore } from "../services/rawgService.js";
-import type { IGame } from "../models/Game.js";
-import { Game } from "../models/Game.js";
-import type { AuthRequest } from "../middleware/auth.js";
+import { fetchMetacriticScore } from "../services/rawgService";
+import type { IGame } from "../models/Game";
+import { Game } from "../models/Game";
+import type { AuthRequest } from "../middleware/authMiddleware";
 import type { FilterQuery } from "mongoose";
 
 type AuthRequestHandler = (
@@ -18,20 +18,27 @@ export const addGameHandler: AuthRequestHandler = async (
   try {
     const { title, status, length, platform } = req.body;
 
-    const criticScore = await fetchMetacriticScore(title, platform);
+    if (!title || !status || !length || !platform) {
+      console.error("Missing required fields");
+      res.status(400).json({ message: "Missing required fields" });
+      return;
+    }
+
+    const metacriticScore = await fetchMetacriticScore(title, platform);
 
     const game = new Game({
       title,
       status,
       length,
       platform,
-      criticScore,
+      metacriticScore,
       userId: req.userId,
     });
 
     await game.save();
-    res.json(game);
+    res.status(201).json(game);
   } catch (err) {
+    console.error("Error creating game:", err);
     res.status(400).json({ message: "Error creating game", error: err });
   }
 };
@@ -40,8 +47,13 @@ export const getGamesHandler: AuthRequestHandler = async (
   req: AuthRequest,
   res: Response
 ) => {
-  const games = await Game.find({ userId: req.userId }, { _id: 0 });
-  res.json(games);
+  if (!req.userId) {
+    console.error("Missing required fields");
+    res.status(400).json({ message: "Missing required fields" });
+    return;
+  }
+  const games = await Game.find({ userId: req.userId }, { __v: 0, _id: 0 });
+  res.status(200).json(games);
 };
 
 export const deleteGameHandler: AuthRequestHandler = async (
@@ -51,6 +63,11 @@ export const deleteGameHandler: AuthRequestHandler = async (
   try {
     const { title, platform } = req.body;
     const userId = req.userId;
+    if (!title || !platform || !userId) {
+      console.error("Missing required fields");
+      res.status(400).json({ message: "Missing required fields" });
+      return;
+    }
     const game = await Game.findOne({ userId, title, platform });
     if (!game) {
       res.status(404).json({
@@ -75,6 +92,11 @@ export const updateStatusHandler: AuthRequestHandler = async (
 ) => {
   try {
     const { title, platform, newStatus } = req.body;
+    if (!title || !platform || !newStatus || !req.userId) {
+      console.error("Missing required fields");
+      res.status(400).json({ message: "Missing required fields" });
+      return;
+    }
     const game = await Game.findOne({
       title: title,
       platform: platform,
@@ -113,6 +135,11 @@ export const suggestGamesHandler: AuthRequestHandler = async (
   try {
     const { platform, length } = req.query;
     const userId = req.userId;
+    if (!userId) {
+      console.error("Missing required fields");
+      res.status(400).json({ message: "Missing required fields" });
+      return;
+    }
     const filters: FilterQuery<IGame> = {
       userId: userId,
       status: { $in: ["backlog", "abandoned"] },

@@ -1,6 +1,6 @@
 import axios from "axios";
-import type { PlatformName } from "../constants/platforms.js";
-import { PLATFORMS } from "../constants/platforms.js";
+import type { PlatformName } from "../constants/platforms";
+import { PLATFORMS } from "../constants/platforms";
 
 const RAWG_API_KEY = process.env.RAWG_API_KEY || "";
 
@@ -27,6 +27,7 @@ export async function fetchMetacriticScore(
       },
     });
     const results = res.data.results;
+
     if (results && results.length > 0) {
       return results[0].metacritic;
     }
