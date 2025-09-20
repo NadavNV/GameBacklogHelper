@@ -1,0 +1,141 @@
+@import "tailwindcss";
+
+/* --- Base resets and typography --- */
+@layer base {
+  html,
+  body,
+  #root {
+    @apply h-full w-full bg-gray-50 text-gray-900 font-sans;
+  }
+
+  a {
+    @apply text-blue-600 hover:text-blue-800 underline;
+  }
+
+  input,
+  textarea,
+  select {
+    @apply border border-gray-300 rounded-md px-3 py-2 shadow-sm
+           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500;
+  }
+
+  /* Headings */
+  h1 {
+    @apply text-4xl font-bold mb-4 tracking-tight;
+  }
+  h2 {
+    @apply text-3xl font-semibold mb-3 tracking-tight;
+  }
+  h3 {
+    @apply text-2xl font-semibold mb-2;
+  }
+  h4 {
+    @apply text-xl font-semibold mb-2;
+  }
+
+  /* Paragraphs */
+  p {
+    @apply mb-4 leading-relaxed text-gray-700;
+  }
+
+  /* Dark mode base */
+  .dark html,
+  .dark body,
+  .dark #root {
+    @apply bg-gray-900 text-gray-100;
+  }
+
+  .dark a {
+    @apply text-blue-400 hover:text-blue-200;
+  }
+
+  .dark input,
+  .dark textarea,
+  .dark select {
+    @apply border-gray-600 bg-gray-700 text-gray-100;
+  }
+}
+
+/* --- Components --- */
+@layer components {
+  /* Buttons */
+  .btn-primary {
+    @apply px-5 py-2 bg-blue-600 text-white rounded-md shadow-md hover:bg-blue-700 transition-colors font-medium;
+  }
+
+  .btn-secondary {
+    @apply px-5 py-2 bg-gray-200 text-gray-800 rounded-md shadow-md hover:bg-gray-300 transition-colors font-medium;
+  }
+
+  .dark .btn-primary {
+    @apply bg-blue-500 hover:bg-blue-600 text-white;
+  }
+  .dark .btn-secondary {
+    @apply bg-gray-700 text-gray-200 hover:bg-gray-600;
+  }
+
+  /* Layout Containers */
+  .container {
+    @apply max-w-7xl mx-auto px-4;
+  }
+
+  /* Header */
+  .header {
+    @apply flex items-center justify-between p-6 bg-gray-50;
+  }
+
+  .dark .header {
+    @apply bg-gray-900;
+  }
+
+  .header-title {
+    @apply text-2xl font-bold tracking-tight;
+  }
+
+  .header-nav {
+    @apply flex space-x-4;
+  }
+
+  /* Footer */
+  .footer {
+    @apply mt-auto p-6 text-center text-sm text-gray-500 border-t border-gray-200 bg-gray-50;
+  }
+
+  .footer a {
+    @apply text-blue-600 hover:text-blue-800 underline;
+  }
+
+  .dark .footer {
+    @apply text-gray-400 border-gray-700 bg-gray-900;
+  }
+
+  /* Forms */
+  .form-group {
+    @apply flex flex-row space-x-4 mb-4;
+  }
+
+  .form-label {
+    @apply font-medium text-gray-700 flex flex-1 items-center space-x-4 px-2 py-3;
+  }
+
+  .dark .form-label {
+    @apply text-gray-200;
+  }
+
+  .form-input {
+    @apply border border-gray-300 rounded-md px-3 py-2 shadow-sm
+           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500;
+  }
+
+  .dark .form-input {
+    @apply border-gray-600 bg-gray-700 text-gray-100;
+  }
+  /* Tables */
+  td {
+    @apply px-4 py-2 border-r last:border-r-0;
+  }
+
+  th {
+    @apply px-4 py-2;
+  }
+}

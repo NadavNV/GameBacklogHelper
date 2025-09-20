@@ -10,6 +10,7 @@ export const registerHandler: RequestHandler = async (
   res: Response
 ) => {
   try {
+    console.log("Registering user");
     const { username, email, password } = req.body;
 
     if (!username || !email || !password) {

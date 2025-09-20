@@ -2,7 +2,7 @@ import {
   addGameHandler,
   deleteGameHandler,
   getGamesHandler,
-  updateStatusHandler,
+  updateGameHandler,
   suggestGamesHandler,
 } from "../../src/controllers/gameController";
 import { AuthRequest } from "../../src/middleware/authMiddleware";
@@ -117,7 +117,6 @@ describe("Game Controller", () => {
           length: "long",
           platform: "PC",
           metacriticScore: expect.any(Number),
-          userId: otherUserId,
         }),
       ])
     );
@@ -253,7 +252,7 @@ describe("Game Controller", () => {
       userId: fakeUserId,
     };
 
-    await updateStatusHandler(req, res, jest.fn());
+    await updateGameHandler(req, res, jest.fn());
 
     expect(statusMock).toHaveBeenNthCalledWith(2, 200);
     expect(jsonMock).toHaveBeenNthCalledWith(
@@ -274,7 +273,6 @@ describe("Game Controller", () => {
           length: "long",
           platform: "PC",
           metacriticScore: expect.any(Number),
-          userId: fakeUserId,
         }),
       ])
     );
@@ -301,7 +299,7 @@ describe("Game Controller", () => {
       userId: fakeUserId,
     };
 
-    await updateStatusHandler(req, res, jest.fn());
+    await updateGameHandler(req, res, jest.fn());
 
     expect(statusMock).toHaveBeenNthCalledWith(2, 200);
     expect(jsonMock).toHaveBeenNthCalledWith(
@@ -337,7 +335,7 @@ describe("Game Controller", () => {
       userId: fakeUserId,
     } as any;
 
-    await updateStatusHandler(req, res, jest.fn());
+    await updateGameHandler(req, res, jest.fn());
 
     expect(statusMock).toHaveBeenCalledWith(400);
     expect(jsonMock).toHaveBeenCalledWith(
@@ -356,7 +354,7 @@ describe("Game Controller", () => {
       userId: fakeUserId,
     } as any;
 
-    await updateStatusHandler(req, res, jest.fn());
+    await updateGameHandler(req, res, jest.fn());
 
     expect(statusMock).toHaveBeenCalledWith(400);
     expect(jsonMock).toHaveBeenCalledWith(
@@ -375,7 +373,7 @@ describe("Game Controller", () => {
       userId: fakeUserId,
     } as any;
 
-    await updateStatusHandler(req, res, jest.fn());
+    await updateGameHandler(req, res, jest.fn());
 
     expect(statusMock).toHaveBeenCalledWith(400);
     expect(jsonMock).toHaveBeenCalledWith(
@@ -394,7 +392,7 @@ describe("Game Controller", () => {
       },
     } as any;
 
-    await updateStatusHandler(req, res, jest.fn());
+    await updateGameHandler(req, res, jest.fn());
 
     expect(statusMock).toHaveBeenCalledWith(400);
     expect(jsonMock).toHaveBeenCalledWith(
@@ -414,7 +412,7 @@ describe("Game Controller", () => {
       userId: fakeUserId,
     } as any;
 
-    await updateStatusHandler(req, res, jest.fn());
+    await updateGameHandler(req, res, jest.fn());
 
     expect(statusMock).toHaveBeenCalledWith(404);
     expect(jsonMock).toHaveBeenCalledWith(

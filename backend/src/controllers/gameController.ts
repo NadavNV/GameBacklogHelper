@@ -52,7 +52,10 @@ export const getGamesHandler: AuthRequestHandler = async (
     res.status(400).json({ message: "Missing required fields" });
     return;
   }
-  const games = await Game.find({ userId: req.userId }, { __v: 0, _id: 0 });
+  const games = await Game.find(
+    { userId: req.userId },
+    { __v: 0, _id: 0, userId: 0 }
+  );
   res.status(200).json(games);
 };
 
@@ -61,7 +64,7 @@ export const deleteGameHandler: AuthRequestHandler = async (
   res: Response
 ) => {
   try {
-    const { title, platform } = req.body;
+    const { title, platform } = req.query;
     const userId = req.userId;
     if (!title || !platform || !userId) {
       console.error("Missing required fields");
@@ -86,13 +89,13 @@ export const deleteGameHandler: AuthRequestHandler = async (
   }
 };
 
-export const updateStatusHandler: AuthRequestHandler = async (
+export const updateGameHandler: AuthRequestHandler = async (
   req: AuthRequest,
   res: Response
 ) => {
   try {
-    const { title, platform, newStatus } = req.body;
-    if (!title || !platform || !newStatus || !req.userId) {
+    const { title, platform, newStatus, newLength } = req.body;
+    if (!title || !platform || (!newStatus && !newLength) || !req.userId) {
       console.error("Missing required fields");
       res.status(400).json({ message: "Missing required fields" });
       return;
@@ -114,12 +117,12 @@ export const updateStatusHandler: AuthRequestHandler = async (
         platform: platform,
         userId: req.userId,
       },
-      { status: newStatus }
+      { status: newStatus ?? game.status, length: newLength ?? game.length }
     );
     if (query.modifiedCount === 1) {
-      res.status(200).json({ message: "Status updated successfully" });
+      res.status(200).json({ message: "Game updated successfully" });
     } else if (query.matchedCount === 1) {
-      res.status(200).json({ message: "No change: status already set" });
+      res.status(200).json({ message: "No change: status/length already set" });
     } else {
       res.status(404).json({ message: "Game not found" });
     }

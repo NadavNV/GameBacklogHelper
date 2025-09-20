@@ -4,7 +4,7 @@ import {
   addGameHandler,
   getGamesHandler,
   deleteGameHandler,
-  updateStatusHandler,
+  updateGameHandler,
   suggestGamesHandler,
 } from "../controllers/gameController";
 
@@ -20,7 +20,7 @@ router.get("/", authMiddleware, getGamesHandler);
 router.delete("/", authMiddleware, deleteGameHandler);
 
 // Change the status of a game
-router.post("/", authMiddleware, updateStatusHandler);
+router.put("/", authMiddleware, updateGameHandler);
 
 // Suggest up to 5 games to play based on the given parameters
 router.get("/suggest", authMiddleware, suggestGamesHandler);
