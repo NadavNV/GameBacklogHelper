@@ -1,3 +1,10 @@
+interface SelectProps {
+  label: string;
+  value: string;
+  options: { label: string; value: string }[];
+  onChange: (value: string) => void;
+}
+
 // A React-compatible select input
 export default function Select({
   // The label for the select input
@@ -10,14 +17,12 @@ export default function Select({
   // Function to be called when the selected value changes. Recieves the new
   // value as its only argument.
   onChange,
-  // Whether or not to disable the component
-  disabled,
-}) {
+}: SelectProps) {
   return (
-    <label>
-      {label}
+    <label className="form-label">
+      <span>{label}</span>
       <select
-        disabled={disabled}
+        className="form-input"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         aria-label={`Select ${label}`}

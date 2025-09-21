@@ -4,6 +4,8 @@ import { PLATFORMS, type PlatformName } from "src/constants/platforms";
 import { statusOptions, type StatusKey } from "src/constants/statuses";
 import { useCreateGame } from "src/services/mutations";
 import { motion, AnimatePresence } from "framer-motion";
+import { useNumOfGames } from "src/services/queries";
+import { MAX_GAMES_PER_USER } from "src/constants/config";
 
 interface AddGameProps {
   resetForm: () => void;
@@ -20,6 +22,7 @@ export default function AddGame({
   const [platform, setPlatform] = useState<PlatformName>("PC");
   const [status, setStatus] = useState<StatusKey>("backlog");
   const [length, setLength] = useState<LengthKey>("notAvailable");
+  const gamesQuery = useNumOfGames();
 
   const createGameMutation = useCreateGame(resetForm);
 
@@ -54,6 +57,7 @@ export default function AddGame({
           }`}
         >
           <h3>Add Game</h3>
+          <h4>Limit {`${MAX_GAMES_PER_USER}`} games per user</h4>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="form-group">
               <label className="form-label">
@@ -122,7 +126,14 @@ export default function AddGame({
                 </select>
               </label>
             </div>
-            <button className="btn-primary" onClick={handleSubmit}>
+            <button
+              className="btn-primary"
+              onClick={handleSubmit}
+              disabled={
+                gamesQuery.data !== undefined &&
+                gamesQuery.data >= MAX_GAMES_PER_USER
+              }
+            >
               Submit
             </button>
             <br />

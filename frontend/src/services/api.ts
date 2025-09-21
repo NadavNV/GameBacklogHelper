@@ -3,7 +3,7 @@ import type { DeleteData } from "src/types/DeleteData";
 import type { GameData } from "src/types/GameData";
 import type { SuggestData } from "src/types/SuggestData";
 import type { UpdateData } from "src/types/UpdateData";
-import { useAuth } from "src/contexts/useAuth";
+import { useAuth } from "src/contexts/auth/useAuth";
 
 export const useApi = () => {
   const { logout, token } = useAuth();
@@ -57,6 +57,10 @@ export const useApi = () => {
     return (await axiosInstance.get<GameData[]>("/api/games")).data;
   };
 
+  const getNumOfGames = async () => {
+    return (await axiosInstance.get<number>("/api/games/length")).data;
+  };
+
   const createGame = async (game: GameData) => {
     await axiosInstance.post("/api/games", game);
   };
@@ -79,6 +83,7 @@ export const useApi = () => {
     loginUser,
     registerUser,
     getGames,
+    getNumOfGames,
     createGame,
     updateGame,
     deleteGame,

@@ -46,7 +46,9 @@ export function useCreateGame(resetForm: () => void) {
     onSuccess: async () => {
       resetForm();
       // Fetch updated device data
-      await queryClient.invalidateQueries({ queryKey: ["games"] });
+      await queryClient.invalidateQueries({
+        queryKey: ["games", "games_length"],
+      });
     },
   });
 }
@@ -72,7 +74,9 @@ export function useDeleteGame() {
     mutationFn: (data: DeleteData) => deleteGame(data),
     onError: (error) => handleError(error),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["games"] });
+      await queryClient.invalidateQueries({
+        queryKey: ["games", "games_length"],
+      });
     },
   });
 }

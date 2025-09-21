@@ -20,7 +20,7 @@ export const addGameHandler: AuthRequestHandler = async (
 
     if (!title || !status || !length || !platform) {
       console.error("Missing required fields");
-      res.status(400).json({ message: "Missing required fields" });
+      res.status(400).json({ error: "Missing required fields" });
       return;
     }
 
@@ -48,8 +48,8 @@ export const getGamesHandler: AuthRequestHandler = async (
   res: Response
 ) => {
   if (!req.userId) {
-    console.error("Missing required fields");
-    res.status(400).json({ message: "Missing required fields" });
+    console.error("Missing user ID");
+    res.status(401).json({ error: "Missing user ID" });
     return;
   }
   const games = await Game.find(
@@ -68,13 +68,16 @@ export const deleteGameHandler: AuthRequestHandler = async (
     const userId = req.userId;
     if (!title || !platform || !userId) {
       console.error("Missing required fields");
-      res.status(400).json({ message: "Missing required fields" });
+      res.status(400).json({ error: "Missing required fields" });
       return;
     }
     const game = await Game.findOne({ userId, title, platform });
     if (!game) {
+      console.error(
+        `Game ${title} on platform ${platform} not found for this user`
+      );
       res.status(404).json({
-        message: `Game ${title} on platform ${platform} not found for this user`,
+        error: `Game ${title} on platform ${platform} not found for this user`,
       });
       return;
     }
@@ -82,7 +85,8 @@ export const deleteGameHandler: AuthRequestHandler = async (
     if (query.deletedCount === 1) {
       res.status(200).json({ message: "Game deleted successfully" });
     } else {
-      res.status(500).json({ message: "Failed to delete game" });
+      console.error("Failed to delete game");
+      res.status(500).json({ error: "Failed to delete game" });
     }
   } catch (err) {
     res.status(500).json({ message: "Error deleting game", error: err });
@@ -97,7 +101,7 @@ export const updateGameHandler: AuthRequestHandler = async (
     const { title, platform, newStatus, newLength } = req.body;
     if (!title || !platform || (!newStatus && !newLength) || !req.userId) {
       console.error("Missing required fields");
-      res.status(400).json({ message: "Missing required fields" });
+      res.status(400).json({ error: "Missing required fields" });
       return;
     }
     const game = await Game.findOne({
@@ -106,8 +110,11 @@ export const updateGameHandler: AuthRequestHandler = async (
       userId: req.userId,
     });
     if (!game) {
+      console.error(
+        `Game ${title} on platform ${platform} not found for this user`
+      );
       res.status(404).json({
-        message: `Game ${title} on platform ${platform} not found for this user`,
+        error: `Game ${title} on platform ${platform} not found for this user`,
       });
       return;
     }
@@ -124,7 +131,12 @@ export const updateGameHandler: AuthRequestHandler = async (
     } else if (query.matchedCount === 1) {
       res.status(200).json({ message: "No change: status/length already set" });
     } else {
-      res.status(404).json({ message: "Game not found" });
+      console.error(
+        `Game ${title} on platform ${platform} not found for this user`
+      );
+      res.status(404).json({
+        error: `Game ${title} on platform ${platform} not found for this user`,
+      });
     }
   } catch (err) {
     res.status(500).json({ message: "Error changing status", error: err });
@@ -140,7 +152,7 @@ export const suggestGamesHandler: AuthRequestHandler = async (
     const userId = req.userId;
     if (!userId) {
       console.error("Missing required fields");
-      res.status(400).json({ message: "Missing required fields" });
+      res.status(400).json({ error: "Missing required fields" });
       return;
     }
     const filters: FilterQuery<IGame> = {
@@ -164,4 +176,16 @@ export const suggestGamesHandler: AuthRequestHandler = async (
       .status(500)
       .json({ message: "Error generating suggestions", error: err });
   }
+};
+
+export const getNumOfGamesHandler: AuthRequestHandler = async (
+  req: AuthRequest,
+  res: Response
+) => {
+  if (!req.userId) {
+    console.error("Missing user ID");
+    res.status(401).json({ error: "Missing user ID" });
+  }
+  const games = await Game.find({ userId: req.userId });
+  res.status(200).json(games.length);
 };

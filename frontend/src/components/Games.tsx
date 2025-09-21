@@ -142,8 +142,8 @@ export default function Games() {
       deleteGameMutation.mutate(data);
   }
 
-  if (gamesQuery.isError) return <p>Error loading games</p>;
-  if (isFetching || isMutating) return <p>Loading...</p>;
+  if (gamesQuery.isError) return <h1>Error loading games</h1>;
+  if (isFetching || isMutating) return <h1>Loading...</h1>;
 
   return (
     <div className="max-w-5xl mx-auto px-4">

@@ -12,10 +12,12 @@ export default function AppHeader({ onLogout, isDarkMode }: HeaderProps) {
   const [showSuggestGame, setShowSuggestGame] = useState(false);
 
   function toggleAddGame() {
+    setShowSuggestGame(false);
     setShowAddGame(!showAddGame);
   }
 
   function toggleSuggestGame() {
+    setShowAddGame(false);
     setShowSuggestGame(!showSuggestGame);
   }
 

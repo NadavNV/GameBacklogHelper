@@ -6,6 +6,7 @@ import {
   deleteGameHandler,
   updateGameHandler,
   suggestGamesHandler,
+  getNumOfGamesHandler,
 } from "../controllers/gameController";
 
 const router = Router();
@@ -15,6 +16,9 @@ router.post("/", authMiddleware, addGameHandler);
 
 // Get all games for logged-in user
 router.get("/", authMiddleware, getGamesHandler);
+
+// Get the number of games this user has in the collection
+router.get("/length", authMiddleware, getNumOfGamesHandler);
 
 // Remove a game from the collection
 router.delete("/", authMiddleware, deleteGameHandler);

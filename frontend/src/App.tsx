@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import AuthForm from "src/components/AuthForm";
 import Games from "src/components/Games";
 import AppHeader from "src/components/AppHeader";
-import { useAuth } from "./contexts/useAuth";
+import { useAuth } from "./contexts/auth/useAuth";
 
 export default function App() {
   const [darkMode, setDarkMode] = useState(true);

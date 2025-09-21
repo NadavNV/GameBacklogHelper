@@ -10,6 +10,14 @@ export function useGames() {
   });
 }
 
+export function useNumOfGames() {
+  const { getNumOfGames } = useApi();
+  return useQuery({
+    queryKey: ["games_length"],
+    queryFn: getNumOfGames,
+  });
+}
+
 export function useSuggestions(data: SuggestData) {
   const { suggestGame } = useApi();
   return useQuery({

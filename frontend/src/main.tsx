@@ -2,7 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { AuthProvider } from "./contexts/AuthProvider.tsx";
+import { AuthProvider } from "./contexts/auth/AuthProvider.tsx";
 import "src/styles/global.css";
 import App from "./App.tsx";
 
