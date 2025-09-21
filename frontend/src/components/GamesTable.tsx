@@ -12,6 +12,7 @@ import type { DeleteData } from "src/types/DeleteData";
 interface GameTableProps {
   games: GameData[];
   interactive: boolean;
+  sortBy: "metacriticScore" | "title";
 }
 
 // By which column and in which direction to sort the table
@@ -42,22 +43,44 @@ const columnNames = {
 };
 
 // Helper function to interpolate between two hex colors
-function interpolateColor(color1: string, color2: string, factor: number) {
+function interpolateColor(
+  startColor: string,
+  midColor: string,
+  endColor: string,
+  factor: number
+) {
+  if (factor < 0.5) {
+    endColor = midColor;
+    factor /= 0.5;
+  } else {
+    startColor = midColor;
+    factor = (factor - 0.5) / 0.5;
+  }
   const hex = (c: string) => parseInt(c, 16);
   const r = Math.round(
-    hex(color1.slice(1, 3)) +
-      factor * (hex(color2.slice(1, 3)) - hex(color1.slice(1, 3)))
+    hex(startColor.slice(1, 3)) +
+      factor * (hex(endColor.slice(1, 3)) - hex(startColor.slice(1, 3)))
   );
   const g = Math.round(
-    hex(color1.slice(3, 5)) +
-      factor * (hex(color2.slice(3, 5)) - hex(color1.slice(3, 5)))
+    hex(startColor.slice(3, 5)) +
+      factor * (hex(endColor.slice(3, 5)) - hex(startColor.slice(3, 5)))
   );
   const b = Math.round(
-    hex(color1.slice(5, 7)) +
-      factor * (hex(color2.slice(5, 7)) - hex(color1.slice(5, 7)))
+    hex(startColor.slice(5, 7)) +
+      factor * (hex(endColor.slice(5, 7)) - hex(startColor.slice(5, 7)))
   );
   return `rgb(${r},${g},${b})`;
 }
+
+const valueToColor = {
+  short: "#44ce1b", // green
+  medium: "#f2a134", // orange
+  long: "#e51f1f", // red
+  backlog: "#e51f1f", // red
+  abandoned: "#f2a134", // orange
+  playing: "#bbdb44", // lime green
+  finished: "#44ce1b", // green
+};
 
 function getCellColor(
   value: string | number | undefined,
@@ -65,27 +88,23 @@ function getCellColor(
 ) {
   if (value === "notAvailable" || value === undefined) return ""; // baseline color
 
-  const startColor = "#44ce1b"; // green
-  const endColor = "#e51f1f"; // red
-
   if (type === "length") {
-    // Exclude the last "notAvailable" element
-    const validOrder = lengthOrder.slice(0, lengthOrder.length - 1);
-    const idx = validOrder.indexOf(value as string);
-    const factor = idx / (validOrder.length - 1);
-    return interpolateColor(startColor, endColor, factor);
+    const lengthValue = value as keyof typeof valueToColor;
+    return valueToColor[lengthValue];
   }
 
   if (type === "status") {
-    const idx = statusOrder.indexOf(value as string);
-    const factor = idx / (statusOrder.length - 1);
-    return interpolateColor(startColor, endColor, factor);
+    const statusValue = value as keyof typeof valueToColor;
+    return valueToColor[statusValue];
   }
 
   if (type === "score") {
+    const startColor = "#e51f1f"; // red
+    const midColor = "#f7e379"; // yellow
+    const endColor = "#44ce1b"; // green
     const score = Math.min(Math.max(value as number, 0), 100); // clamp 0-100
     const factor = score / 100;
-    return interpolateColor(endColor, startColor, factor);
+    return interpolateColor(startColor, midColor, endColor, factor);
   }
 
   return "";
@@ -95,10 +114,14 @@ function getCellColor(
 // Displays the games of the logged in user in a sortable table,
 // enables removing a games from the database and changing a game's
 // status or length. cells are color coded based on their values.
-export default function GamesTable({ games, interactive }: GameTableProps) {
+export default function GamesTable({
+  games,
+  interactive,
+  sortBy,
+}: GameTableProps) {
   const [sortConfig, setSortConfig] = useState<SortConfig | null>({
-    key: "title",
-    direction: "asc",
+    key: sortBy,
+    direction: sortBy === "title" ? "asc" : "desc",
   });
   const deleteGameMutation = useDeleteGame();
   const updateGameMutation = useUpdateGame();
@@ -148,10 +171,12 @@ export default function GamesTable({ games, interactive }: GameTableProps) {
       <table className="w-full border-collapse">
         <thead>
           <tr>
-            <th
-              key="delete-column"
-              className="cursor-pointer px-4 py-2 border-r border-b"
-            ></th>
+            {interactive && (
+              <th
+                key="delete-column"
+                className="cursor-pointer px-4 py-2 border-r border-b"
+              ></th>
+            )}
             {columns.map((col) => (
               <th
                 key={col}
@@ -180,19 +205,21 @@ export default function GamesTable({ games, interactive }: GameTableProps) {
                 platform: game.platform,
               })}
             >
-              <td>
-                <button
-                  className="btn-secondary"
-                  onClick={() =>
-                    handleDeleteGame({
-                      title: game.title,
-                      platform: game.platform,
-                    })
-                  }
-                >
-                  Delete
-                </button>
-              </td>
+              {interactive && (
+                <td>
+                  <button
+                    className="btn-secondary"
+                    onClick={() =>
+                      handleDeleteGame({
+                        title: game.title,
+                        platform: game.platform,
+                      })
+                    }
+                  >
+                    Delete
+                  </button>
+                </td>
+              )}
               <td>{game.title}</td>
               <td>{game.platform}</td>
               <td

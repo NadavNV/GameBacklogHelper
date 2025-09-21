@@ -41,7 +41,6 @@ export default function AddGame({
       length,
     });
     resetToDefaults();
-    resetForm();
   }
 
   return (
@@ -127,6 +126,7 @@ export default function AddGame({
               </label>
             </div>
             <button
+              type="button"
               className="btn-primary"
               onClick={handleSubmit}
               disabled={

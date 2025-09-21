@@ -27,7 +27,7 @@ export default function AppHeader({ onLogout, isDarkMode }: HeaderProps) {
   }
 
   const header = (
-    <header className="header">
+    <header className="header header-nav">
       <button className="btn-primary" onClick={toggleAddGame}>
         {showAddGame ? "Hide" : "Add Game"}
       </button>

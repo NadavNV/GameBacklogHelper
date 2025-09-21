@@ -15,6 +15,7 @@ export default function SuggestGame({ isOpen, isDarkMode }: SuggestGameProps) {
   const [platform, setPlatform] = useState<PlatformName | "">("");
   const [length, setLength] = useState<LengthKey | "">("");
   const [showTable, setShowTable] = useState(false);
+  const [suggestData, setSuggestData] = useState<SuggestData>({});
 
   // Reset when component closes
   useEffect(() => {
@@ -44,72 +45,62 @@ export default function SuggestGame({ isOpen, isDarkMode }: SuggestGameProps) {
     return { label: value, value: key };
   });
 
-  let suggestData: SuggestData = {};
-
   function handleSubmit() {
-    suggestData = {};
-    if (platform !== "") {
-      suggestData.platform = platform;
-    }
-    if (length !== "") {
-      suggestData.length = length;
-    }
+    setSuggestData({
+      ...(platform && { platform }),
+      ...(length && { length }),
+    });
     setShowTable(true);
   }
 
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <motion.div
-          initial={{ y: -100, opacity: 0 }} // start above the header
-          animate={{ y: 0, opacity: 1 }} // slide down into place
-          exit={{ y: -100, opacity: 0 }} // slide back up when closing
-          transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          className={`p-4 m-3 rounded-lg shadow ${
-            isDarkMode ? "bg-gray-800" : "bg-white"
-          }`}
-        >
-          <h1>What kind of games are you looking for?</h1>
-          <form className="space-y-4 max-w-md">
-            <div className="form-group">
-              <Select
-                label="Platform"
-                onChange={handlePlatformChange}
-                options={[{ label: "", value: "" }, ...platformOptions]}
-                value={platform}
-                key="platform-select"
-              />
-              <Select
-                label="Platform"
-                onChange={handleLengthChange}
-                options={[{ label: "", value: "" }, ...lengthOptions]}
-                value={length}
-                key="length-select"
-              />
-            </div>
-            <button
-              type="button"
-              className="btn-secondary"
-              onClick={handleSubmit}
-            >
-              Suggest
-            </button>
-          </form>
-          {showTable && (
-            <motion.div
-              initial={{ y: -100, opacity: 0 }} // start above the header
-              animate={{ y: 0, opacity: 1 }} // slide down into place
-              exit={{ y: -100, opacity: 0 }} // slide back up when closing
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className={`p-4 m-3 rounded-lg shadow ${
+    <div className="relative overflow-hidden">
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            key="SuggestGameMotionDiv"
+            initial={{ y: -50, opacity: 0 }} // start above the header
+            animate={{ y: 0, opacity: 1 }} // slide down into place
+            exit={{ y: -50, opacity: 0 }} // slide back up when closing
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            className="bg-transparent"
+          >
+            <div
+              className={`p-4 m-3 rounded-lg shadow overflow-hidden ${
                 isDarkMode ? "bg-gray-800" : "bg-white"
-              }`}
+              } `}
             >
-              <SuggestionsTable data={suggestData} />
-            </motion.div>
-          )}
-        </motion.div>
-      )}
-    </AnimatePresence>
+              <h1>What kind of games are you looking for?</h1>
+              <form className="space-y-4 max-w-md">
+                <div className="form-group">
+                  <Select
+                    label="Platform"
+                    onChange={handlePlatformChange}
+                    options={[{ label: "", value: "" }, ...platformOptions]}
+                    value={platform}
+                    key="platform-select"
+                  />
+                  <Select
+                    label="Length"
+                    onChange={handleLengthChange}
+                    options={[{ label: "", value: "" }, ...lengthOptions]}
+                    value={length}
+                    key="length-select"
+                  />
+                </div>
+                <button
+                  type="button"
+                  className="btn-secondary"
+                  onClick={handleSubmit}
+                >
+                  Suggest
+                </button>
+              </form>
+              {showTable && <SuggestionsTable data={suggestData} />}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }

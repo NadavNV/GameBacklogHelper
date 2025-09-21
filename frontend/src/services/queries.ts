@@ -21,7 +21,7 @@ export function useNumOfGames() {
 export function useSuggestions(data: SuggestData) {
   const { suggestGame } = useApi();
   return useQuery({
-    queryKey: ["suggestions"],
+    queryKey: ["suggestions", data.length ?? "", data.platform ?? ""],
     queryFn: () => suggestGame(data),
   });
 }

@@ -74,8 +74,11 @@ export const useApi = () => {
   };
 
   const suggestGame = async (data: SuggestData) => {
-    return (await axiosInstance.get<GameData[]>("/api/games", { params: data }))
-      .data;
+    return (
+      await axiosInstance.get<GameData[]>("/api/games/suggest", {
+        params: data,
+      })
+    ).data;
   };
 
   // Return them from the hook

@@ -45,9 +45,14 @@ export function useCreateGame(resetForm: () => void) {
     onError: (error) => handleError(error),
     onSuccess: async () => {
       resetForm();
-      // Fetch updated device data
+      // Fetch updated game data
       await queryClient.invalidateQueries({
-        queryKey: ["games", "games_length"],
+        queryKey: ["games"],
+        refetchType: "all",
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ["games_length"],
+        refetchType: "all",
       });
     },
   });
@@ -61,7 +66,11 @@ export function useUpdateGame() {
     mutationFn: (data: UpdateData) => updateGame(data),
     onError: (error) => handleError(error),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["games"] });
+      // Fetch updated game data
+      await queryClient.invalidateQueries({
+        queryKey: ["games"],
+        refetchType: "all",
+      });
     },
   });
 }
@@ -74,8 +83,14 @@ export function useDeleteGame() {
     mutationFn: (data: DeleteData) => deleteGame(data),
     onError: (error) => handleError(error),
     onSuccess: async () => {
+      // Fetch updated game data
       await queryClient.invalidateQueries({
-        queryKey: ["games", "games_length"],
+        queryKey: ["games"],
+        refetchType: "all",
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ["games_length"],
+        refetchType: "all",
       });
     },
   });

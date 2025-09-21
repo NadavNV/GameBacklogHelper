@@ -47,16 +47,20 @@ export const getGamesHandler: AuthRequestHandler = async (
   req: AuthRequest,
   res: Response
 ) => {
-  if (!req.userId) {
-    console.error("Missing user ID");
-    res.status(401).json({ error: "Missing user ID" });
-    return;
+  try {
+    if (!req.userId) {
+      console.error("Missing user ID");
+      res.status(401).json({ error: "Missing user ID" });
+      return;
+    }
+    const games = await Game.find(
+      { userId: req.userId },
+      { __v: 0, _id: 0, userId: 0 }
+    );
+    res.status(200).json(games);
+  } catch (err) {
+    console.error(err);
   }
-  const games = await Game.find(
-    { userId: req.userId },
-    { __v: 0, _id: 0, userId: 0 }
-  );
-  res.status(200).json(games);
 };
 
 export const deleteGameHandler: AuthRequestHandler = async (
@@ -155,6 +159,11 @@ export const suggestGamesHandler: AuthRequestHandler = async (
       res.status(400).json({ error: "Missing required fields" });
       return;
     }
+    console.log(
+      `Suggsting games on ${platform ?? "any platform"} of ${
+        length ?? "any"
+      } length`
+    );
     const filters: FilterQuery<IGame> = {
       userId: userId,
       status: { $in: ["backlog", "abandoned"] },
