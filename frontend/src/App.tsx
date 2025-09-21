@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import AuthForm from "src/components/AuthForm";
-import Games from "src/components/Games";
 import AppHeader from "src/components/AppHeader";
 import { useAuth } from "./contexts/auth/useAuth";
+import MainTable from "./components/MainTable";
 
 export default function App() {
   const [darkMode, setDarkMode] = useState(true);
@@ -30,7 +30,7 @@ export default function App() {
         {token ? (
           <div className="max-w-6xl mx-auto">
             <AppHeader onLogout={logout} isDarkMode={darkMode} />
-            <Games />
+            <MainTable />
           </div>
         ) : (
           <AuthForm onAuth={setToken} />

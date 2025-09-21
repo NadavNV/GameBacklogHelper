@@ -2,7 +2,7 @@ interface SelectProps {
   label: string;
   value: string;
   options: { label: string; value: string }[];
-  onChange: (value: string) => void;
+  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
 // A React-compatible select input
@@ -24,7 +24,7 @@ export default function Select({
       <select
         className="form-input"
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) => onChange(e)}
         aria-label={`Select ${label}`}
       >
         {options.map((option) => (

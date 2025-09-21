@@ -1,11 +1,18 @@
 import { useState } from "react";
-import { useGames } from "src/services/queries";
 import { useDeleteGame, useUpdateGame } from "src/services/mutations";
 import type { GameData } from "src/types/GameData";
-import { useIsFetching, useIsMutating } from "@tanstack/react-query";
-import { lengthsOptions, type LengthKey } from "src/constants/lengths";
-import { statusOptions, type StatusKey } from "src/constants/statuses";
+import { LENGTHS, lengthsOptions, type LengthKey } from "src/constants/lengths";
+import {
+  STATUSES,
+  statusOptions,
+  type StatusKey,
+} from "src/constants/statuses";
 import type { DeleteData } from "src/types/DeleteData";
+
+interface GameTableProps {
+  games: GameData[];
+  interactive: boolean;
+}
 
 // By which column and in which direction to sort the table
 interface SortConfig {
@@ -88,21 +95,15 @@ function getCellColor(
 // Displays the games of the logged in user in a sortable table,
 // enables removing a games from the database and changing a game's
 // status or length. cells are color coded based on their values.
-export default function Games() {
+export default function GamesTable({ games, interactive }: GameTableProps) {
   const [sortConfig, setSortConfig] = useState<SortConfig | null>({
     key: "title",
     direction: "asc",
   });
-  // Query for fetching all games for this user
-  const gamesQuery = useGames();
   const deleteGameMutation = useDeleteGame();
   const updateGameMutation = useUpdateGame();
-  // The number of queries currently pending
-  const isFetching = useIsFetching();
-  // The number of mutations currently pending
-  const isMutating = useIsMutating();
 
-  const sortedGames = (gamesQuery.data ?? []).slice().sort((a, b) => {
+  const sortedGames = (games ?? []).slice().sort((a, b) => {
     if (!sortConfig) return 0;
     const { key, direction } = sortConfig;
 
@@ -141,9 +142,6 @@ export default function Games() {
     if (confirm(`Ar you sure you want to remove ${data.title}?`))
       deleteGameMutation.mutate(data);
   }
-
-  if (gamesQuery.isError) return <h1>Error loading games</h1>;
-  if (isFetching || isMutating) return <h1>Loading...</h1>;
 
   return (
     <div className="max-w-5xl mx-auto px-4">
@@ -200,46 +198,54 @@ export default function Games() {
               <td
                 style={{ backgroundColor: getCellColor(game.status, "status") }}
               >
-                <select
-                  className="form-input bg-transparent border-none focus:ring-0 shadow-none"
-                  value={game.status}
-                  onChange={(e) => {
-                    const value = e.target.value as StatusKey;
-                    updateGameMutation.mutate({
-                      title: game.title,
-                      platform: game.platform,
-                      newStatus: value,
-                    });
-                  }}
-                >
-                  {statusOptions.map(([key, label]) => (
-                    <option key={key} value={key} className="form-input">
-                      {label}
-                    </option>
-                  ))}
-                </select>
+                {interactive ? (
+                  <select
+                    className="form-input bg-transparent border-none focus:ring-0 shadow-none"
+                    value={game.status}
+                    onChange={(e) => {
+                      const value = e.target.value as StatusKey;
+                      updateGameMutation.mutate({
+                        title: game.title,
+                        platform: game.platform,
+                        newStatus: value,
+                      });
+                    }}
+                  >
+                    {statusOptions.map(([key, label]) => (
+                      <option key={key} value={key} className="form-input">
+                        {label}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <span>{STATUSES[game.status]}</span>
+                )}
               </td>
               <td
                 style={{ backgroundColor: getCellColor(game.length, "length") }}
               >
-                <select
-                  className="form-input bg-transparent border-none focus:ring-0 shadow-none"
-                  value={game.length}
-                  onChange={(e) => {
-                    const value = e.target.value as LengthKey;
-                    updateGameMutation.mutate({
-                      title: game.title,
-                      platform: game.platform,
-                      newLength: value,
-                    });
-                  }}
-                >
-                  {lengthsOptions.map(([key, label]) => (
-                    <option key={key} value={key} className="form-input">
-                      {label}
-                    </option>
-                  ))}
-                </select>
+                {interactive ? (
+                  <select
+                    className="form-input bg-transparent border-none focus:ring-0 shadow-none"
+                    value={game.length}
+                    onChange={(e) => {
+                      const value = e.target.value as LengthKey;
+                      updateGameMutation.mutate({
+                        title: game.title,
+                        platform: game.platform,
+                        newLength: value,
+                      });
+                    }}
+                  >
+                    {lengthsOptions.map(([key, label]) => (
+                      <option key={key} value={key} className="form-input">
+                        {label}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <span>{LENGTHS[game.length]}</span>
+                )}
               </td>
               <td
                 style={{
