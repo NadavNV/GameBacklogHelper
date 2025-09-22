@@ -9,6 +9,7 @@ app.use(
     origin: [
       "http://localhost:5173",
       "https://gamebackloghelper-production.up.railway.app/",
+      "gamebackloghelper-e2fcb497.railway.internal",
     ], // your frontend URL
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
