@@ -6,7 +6,10 @@ import gameRoutes from "./routes/games";
 const app = express();
 app.use(
   cors({
-    origin: "http://localhost:5173", // your frontend URL
+    origin: [
+      "http://localhost:5173",
+      "https://gamebackloghelper-production.up.railway.app/",
+    ], // your frontend URL
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
