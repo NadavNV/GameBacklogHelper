@@ -38,10 +38,9 @@
     @apply mb-4 leading-relaxed text-gray-700;
   }
 
-  /* Dark mode base */
-  .dark html,
-  .dark body,
-  .dark #root {
+  html.dark,
+  html.dark body,
+  html.dark #root {
     @apply bg-gray-900 text-gray-100;
   }
 
@@ -145,5 +144,6 @@
     backface-visibility: hidden;
     transform-style: preserve-3d;
     transform: translateZ(0.0001px);
+    background: inherit;
   }
 }

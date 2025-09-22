@@ -8,49 +8,38 @@ interface HeaderProps {
 }
 
 export default function AppHeader({ onLogout, isDarkMode }: HeaderProps) {
-  const [showAddGame, setShowAddGame] = useState(false);
-  const [showSuggestGame, setShowSuggestGame] = useState(false);
-
-  function toggleAddGame() {
-    setShowSuggestGame(false);
-    setShowAddGame(!showAddGame);
-  }
-
-  function toggleSuggestGame() {
-    setShowAddGame(false);
-    setShowSuggestGame(!showSuggestGame);
-  }
-
-  function hideAll() {
-    setShowAddGame(false);
-    setShowSuggestGame(false);
-  }
-
-  const header = (
-    <header className="header header-nav">
-      <button className="btn-primary" onClick={toggleAddGame}>
-        {showAddGame ? "Hide" : "Add Game"}
-      </button>
-
-      <button className="btn-primary" onClick={toggleSuggestGame}>
-        {showSuggestGame ? "Hide" : "Suggest Game"}
-      </button>
-
-      <button className="btn-primary" onClick={onLogout}>
-        Logout
-      </button>
-    </header>
-  );
+  const [panel, setPanel] = useState<"add" | "suggest" | null>(null);
 
   return (
     <div>
-      {header}
-      <AddGame
-        resetForm={hideAll}
-        isOpen={showAddGame}
-        isDarkMode={isDarkMode}
-      />
-      <SuggestGame isOpen={showSuggestGame} isDarkMode={isDarkMode} />
+      <header className="header header-nav">
+        <button
+          className="btn-primary"
+          onClick={() => setPanel(panel === "add" ? null : "add")}
+        >
+          {panel === "add" ? "Hide" : "Add Game"}
+        </button>
+
+        <button
+          className="btn-primary"
+          onClick={() => setPanel(panel === "suggest" ? null : "suggest")}
+        >
+          {panel === "suggest" ? "Hide" : "Suggest Game"}
+        </button>
+
+        <button className="btn-primary" onClick={onLogout}>
+          Logout
+        </button>
+      </header>
+
+      <div>
+        <AddGame
+          resetForm={() => setPanel(null)}
+          isOpen={panel === "add"}
+          isDarkMode={isDarkMode}
+        />
+        <SuggestGame isOpen={panel === "suggest"} isDarkMode={isDarkMode} />
+      </div>
     </div>
   );
 }

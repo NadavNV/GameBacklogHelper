@@ -18,7 +18,7 @@ export default function App() {
   }, [darkMode]);
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col flex-grow">
       {/* Floating theme toggle button */}
       <button
         className="fixed top-4 right-4 z-50 btn-secondary"
@@ -26,7 +26,7 @@ export default function App() {
       >
         {darkMode ? "Light Mode" : "Dark Mode"}
       </button>
-      <main className="flex-1 px-4">
+      <div className="flex-1 px-4">
         {token ? (
           <div className="max-w-6xl mx-auto">
             <AppHeader onLogout={logout} isDarkMode={darkMode} />
@@ -35,7 +35,7 @@ export default function App() {
         ) : (
           <AuthForm onAuth={setToken} />
         )}
-      </main>
+      </div>
       <footer className="footer">
         <p>
           Metacritic scores provided by <a href="https://rawg.io/">RAWG.io</a>
