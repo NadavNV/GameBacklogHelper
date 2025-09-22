@@ -58,12 +58,13 @@ export default function SuggestGame({ isOpen, isDarkMode }: SuggestGameProps) {
       <AnimatePresence>
         {isOpen && (
           <motion.div
+            layout
             key="SuggestGameMotionDiv"
             initial={{ y: -50, opacity: 0 }} // start above the header
             animate={{ y: 0, opacity: 1 }} // slide down into place
             exit={{ y: -50, opacity: 0 }} // slide back up when closing
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="bg-transparent"
+            className="motion-containers"
           >
             <div
               className={`p-4 m-3 rounded-lg shadow overflow-hidden ${
@@ -76,14 +77,14 @@ export default function SuggestGame({ isOpen, isDarkMode }: SuggestGameProps) {
                   <Select
                     label="Platform"
                     onChange={handlePlatformChange}
-                    options={[{ label: "", value: "" }, ...platformOptions]}
+                    options={[{ label: "Any", value: "" }, ...platformOptions]}
                     value={platform}
                     key="platform-select"
                   />
                   <Select
                     label="Length"
                     onChange={handleLengthChange}
-                    options={[{ label: "", value: "" }, ...lengthOptions]}
+                    options={[{ label: "Any", value: "" }, ...lengthOptions]}
                     value={length}
                     key="length-select"
                   />

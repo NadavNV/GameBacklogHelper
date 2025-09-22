@@ -138,4 +138,12 @@
   th {
     @apply px-4 py-2;
   }
+
+  /* Animation */
+  .motion-container {
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+    transform-style: preserve-3d;
+    transform: translateZ(0.0001px);
+  }
 }
