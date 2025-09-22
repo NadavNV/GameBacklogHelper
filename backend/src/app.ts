@@ -4,17 +4,17 @@ import authRoutes from "./routes/auth";
 import gameRoutes from "./routes/games";
 
 const app = express();
-app.use(
-  cors({
-    origin: [
-      "http://localhost:5173",
-      "https://gamebackloghelper-production.up.railway.app/",
-      "gamebackloghelper-e2fcb497.railway.internal",
-    ], // your frontend URL
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-  })
-);
+const corsOptions = {
+  origin: [
+    "http://localhost:5173",
+    "https://gamebackloghelper-production.up.railway.app",
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 app.use(express.json());
 
 // Routes
