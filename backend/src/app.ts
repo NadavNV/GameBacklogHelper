@@ -9,7 +9,7 @@ const corsOptions = {
     "http://localhost:5173",
     "https://gamebackloghelper-production.up.railway.app",
   ],
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
 };
 

@@ -1,6 +1,6 @@
 # GameBacklogHelper
 
-A web app that helps organize and manage gaming backlog, and can suggest games to play next.
+A web app that helps organize and manage gaming backlog, and can suggest games to play next. Available [here](https://gamebackloghelper-production.up.railway.app/).
 
 ## Technologies Used
 
