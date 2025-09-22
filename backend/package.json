@@ -16,7 +16,7 @@
   "main": "server.js",
   "scripts": {
     "build": "tsc -p tsconfig.app.json",
-    "start": "node --env-file=.env dist/server.js",
+    "start": "node dist/server.js",
     "dev": "tsx --env-file=.env --watch src/server.js",
     "test": "jest --env-file=.env --verbose --passWithNoTests"
   },
