@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useDeleteGame, useUpdateGame } from "src/services/mutations";
 import type { GameData } from "src/types/GameData";
 import { LENGTHS, lengthsOptions, type LengthKey } from "src/constants/lengths";
@@ -119,6 +119,7 @@ export default function GamesTable({
   interactive,
   sortBy,
 }: GameTableProps) {
+  const [searchQuery, setSeaarchQuery] = useState("");
   const [sortConfig, setSortConfig] = useState<SortConfig | null>({
     key: sortBy,
     direction: sortBy === "title" ? "asc" : "desc",
@@ -166,8 +167,39 @@ export default function GamesTable({
       deleteGameMutation.mutate(data);
   }
 
+  function handleSearchChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setSeaarchQuery(e.target.value);
+  }
+
+  function isMatch(game: GameData): boolean {
+    const queryLowercase = searchQuery.toLowerCase();
+    if (game.title.toLowerCase().includes(queryLowercase)) {
+      return true;
+    } else if (
+      game.length.toLowerCase().includes(queryLowercase) ||
+      (game.length === "notAvailable" &&
+        "not available".includes(queryLowercase))
+    ) {
+      return true;
+    } else if (game.status.toLowerCase().includes(queryLowercase)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   return (
     <div className="max-w-5xl mx-auto px-4">
+      <label className="form-label">
+        <span>Search:</span>
+        <input
+          className="form-input"
+          type="text"
+          placeholder="Search"
+          onChange={handleSearchChange}
+          aria-label="Search field"
+        />
+      </label>
       <table className="w-full border-collapse">
         <thead>
           <tr>
@@ -198,91 +230,101 @@ export default function GamesTable({
           </tr>
         </thead>
         <tbody className="px-4 py-2 border-b last:border-b-0">
-          {sortedGames.map((game) => (
-            <tr
-              key={JSON.stringify({
-                title: game.title,
-                platform: game.platform,
-              })}
-            >
-              {interactive && (
-                <td>
-                  <button
-                    className="btn-secondary"
-                    onClick={() =>
-                      handleDeleteGame({
-                        title: game.title,
-                        platform: game.platform,
-                      })
-                    }
-                  >
-                    Delete
-                  </button>
-                </td>
-              )}
-              <td>{game.title}</td>
-              <td>{game.platform}</td>
-              <td
-                style={{ backgroundColor: getCellColor(game.status, "status") }}
-              >
-                {interactive ? (
-                  <select
-                    className="form-input bg-transparent border-none focus:ring-0 shadow-none"
-                    value={game.status}
-                    onChange={(e) => {
-                      const value = e.target.value as StatusKey;
-                      updateGameMutation.mutate({
-                        title: game.title,
-                        platform: game.platform,
-                        newStatus: value,
-                      });
+          {sortedGames.map(
+            (game) =>
+              isMatch(game) && (
+                <tr
+                  key={JSON.stringify({
+                    title: game.title,
+                    platform: game.platform,
+                  })}
+                >
+                  {interactive && (
+                    <td>
+                      <button
+                        className="btn-secondary"
+                        onClick={() =>
+                          handleDeleteGame({
+                            title: game.title,
+                            platform: game.platform,
+                          })
+                        }
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  )}
+                  <td>{game.title}</td>
+                  <td>{game.platform}</td>
+                  <td
+                    style={{
+                      backgroundColor: getCellColor(game.status, "status"),
                     }}
                   >
-                    {statusOptions.map(([key, label]) => (
-                      <option key={key} value={key} className="form-input">
-                        {label}
-                      </option>
-                    ))}
-                  </select>
-                ) : (
-                  <span>{STATUSES[game.status]}</span>
-                )}
-              </td>
-              <td
-                style={{ backgroundColor: getCellColor(game.length, "length") }}
-              >
-                {interactive ? (
-                  <select
-                    className="form-input bg-transparent border-none focus:ring-0 shadow-none"
-                    value={game.length}
-                    onChange={(e) => {
-                      const value = e.target.value as LengthKey;
-                      updateGameMutation.mutate({
-                        title: game.title,
-                        platform: game.platform,
-                        newLength: value,
-                      });
+                    {interactive ? (
+                      <select
+                        className="form-input bg-transparent border-none focus:ring-0 shadow-none"
+                        value={game.status}
+                        onChange={(e) => {
+                          const value = e.target.value as StatusKey;
+                          updateGameMutation.mutate({
+                            title: game.title,
+                            platform: game.platform,
+                            newStatus: value,
+                          });
+                        }}
+                      >
+                        {statusOptions.map(([key, label]) => (
+                          <option key={key} value={key} className="form-input">
+                            {label}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <span>{STATUSES[game.status]}</span>
+                    )}
+                  </td>
+                  <td
+                    style={{
+                      backgroundColor: getCellColor(game.length, "length"),
                     }}
                   >
-                    {lengthsOptions.map(([key, label]) => (
-                      <option key={key} value={key} className="form-input">
-                        {label}
-                      </option>
-                    ))}
-                  </select>
-                ) : (
-                  <span>{LENGTHS[game.length]}</span>
-                )}
-              </td>
-              <td
-                style={{
-                  backgroundColor: getCellColor(game.metacriticScore, "score"),
-                }}
-              >
-                {game.metacriticScore ?? "N/A"}
-              </td>
-            </tr>
-          ))}
+                    {interactive ? (
+                      <select
+                        className="form-input bg-transparent border-none focus:ring-0 shadow-none"
+                        value={game.length}
+                        onChange={(e) => {
+                          const value = e.target.value as LengthKey;
+                          updateGameMutation.mutate({
+                            title: game.title,
+                            platform: game.platform,
+                            newLength: value,
+                          });
+                        }}
+                      >
+                        {lengthsOptions.map(([key, label]) => (
+                          <option key={key} value={key} className="form-input">
+                            {label}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <span>{LENGTHS[game.length]}</span>
+                    )}
+                  </td>
+                  <td
+                    style={{
+                      backgroundColor: getCellColor(
+                        game.metacriticScore,
+                        "score"
+                      ),
+                    }}
+                  >
+                    {game.metacriticScore ?? "N/A"}
+                  </td>
+                </tr>
+              )
+          )}
         </tbody>
       </table>
     </div>
