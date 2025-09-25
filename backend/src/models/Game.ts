@@ -1,11 +1,13 @@
 import { Schema, model, Document, Types } from "mongoose";
 import type { PlatformName } from "../constants/platforms";
 import { PLATFORMS } from "../constants/platforms";
+import { STATUSES, type StatusKey } from "../constants/statuses";
+import { LENGTHS, type LengthKey } from "../constants/lengths";
 
 export interface IGame extends Document {
   title: string;
-  status: "backlog" | "playing" | "finished" | "abandoned";
-  length: "short" | "medium" | "long" | "notAvailable";
+  status: StatusKey;
+  length: LengthKey;
   platform: PlatformName;
   metacriticScore?: number;
   userId: Types.ObjectId; // reference to User
@@ -15,12 +17,12 @@ const gameSchema = new Schema<IGame>({
   title: { type: String, required: true },
   status: {
     type: String,
-    enum: ["backlog", "playing", "finished", "abandoned"],
+    enum: Object.keys(STATUSES),
     default: "backlog",
   },
   length: {
     type: String,
-    enum: ["short", "medium", "long", "notAvailable"],
+    enum: Object.keys(LENGTHS),
     default: "notAvailable",
   },
   platform: {

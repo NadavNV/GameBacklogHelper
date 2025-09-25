@@ -95,3 +95,24 @@ export function useDeleteGame() {
     },
   });
 }
+
+export function useSteam() {
+  const queryClient = useQueryClient();
+  const { connectToSteam } = useApi();
+
+  return useMutation({
+    mutationFn: (identifier: string) => connectToSteam(identifier),
+    onError: (error) => handleError(error),
+    onSuccess: async () => {
+      // Fetch updated game data
+      await queryClient.invalidateQueries({
+        queryKey: ["games"],
+        refetchType: "all",
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ["games_length"],
+        refetchType: "all",
+      });
+    },
+  });
+}

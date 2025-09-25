@@ -7,6 +7,7 @@ import {
   updateGameHandler,
   suggestGamesHandler,
   getNumOfGamesHandler,
+  importLibraryHandler,
 } from "../controllers/gameController";
 
 const router = Router();
@@ -28,5 +29,8 @@ router.put("/", authMiddleware, updateGameHandler);
 
 // Suggest up to 5 games to play based on the given parameters
 router.get("/suggest", authMiddleware, suggestGamesHandler);
+
+// Add Steam library. Request must contain the user's SteamID
+router.post("/steam", authMiddleware, importLibraryHandler);
 
 export default router;

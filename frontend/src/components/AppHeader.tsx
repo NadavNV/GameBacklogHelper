@@ -8,7 +8,7 @@ interface HeaderProps {
 }
 
 export default function AppHeader({ onLogout, isDarkMode }: HeaderProps) {
-  const [panel, setPanel] = useState<"add" | "suggest" | null>(null);
+  const [panel, setPanel] = useState<"add" | "suggest" | "steam" | null>(null);
 
   return (
     <div>
@@ -25,6 +25,13 @@ export default function AppHeader({ onLogout, isDarkMode }: HeaderProps) {
           onClick={() => setPanel(panel === "suggest" ? null : "suggest")}
         >
           {panel === "suggest" ? "Hide" : "Suggest Game"}
+        </button>
+
+        <button
+          className="btn-primary"
+          onClick={() => setPanel(panel === "steam" ? null : "steam")}
+        >
+          {panel === "steam" ? "Hide" : "Link to Steam"}
         </button>
 
         <button className="btn-primary" onClick={onLogout}>

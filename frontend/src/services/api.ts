@@ -81,6 +81,10 @@ export const useApi = () => {
     ).data;
   };
 
+  const connectToSteam = async (identifier: string) => {
+    await axiosInstance.post("/api/games/steam", identifier);
+  };
+
   // Return them from the hook
   return {
     loginUser,
@@ -91,5 +95,6 @@ export const useApi = () => {
     updateGame,
     deleteGame,
     suggestGame,
+    connectToSteam,
   };
 };

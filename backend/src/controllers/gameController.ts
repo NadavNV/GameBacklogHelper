@@ -1,9 +1,11 @@
 import type { Response, NextFunction } from "express";
 import { fetchMetacriticScore } from "../services/rawgService";
+import { fetchGameLengthCategory } from "../services/gameLengthService";
 import type { IGame } from "../models/Game";
 import { Game } from "../models/Game";
 import type { AuthRequest } from "../middleware/authMiddleware";
 import type { FilterQuery } from "mongoose";
+import { importSteamLibrary } from "../services/gameImportService";
 
 type AuthRequestHandler = (
   req: AuthRequest,
@@ -16,17 +18,20 @@ export const addGameHandler: AuthRequestHandler = async (
   res: Response
 ) => {
   try {
-    const { title, status, length, platform } = req.body;
+    const { title, status, platform } = req.body;
 
-    if (!title || !status || !length || !platform) {
+    if (!title || !status || !platform) {
       console.error("Missing required fields");
       res.status(400).json({ error: "Missing required fields" });
       return;
     }
 
-    const metacriticScore = await fetchMetacriticScore(title, platform);
+    const [metacriticScore, length] = await Promise.all([
+      fetchMetacriticScore(title, platform),
+      fetchGameLengthCategory(title),
+    ]);
 
-    const game = new Game({
+    const game = await Game.create({
       title,
       status,
       length,
@@ -34,8 +39,6 @@ export const addGameHandler: AuthRequestHandler = async (
       metacriticScore,
       userId: req.userId,
     });
-
-    await game.save();
     res.status(201).json(game);
   } catch (err) {
     console.error("Error creating game:", err);
@@ -197,4 +200,14 @@ export const getNumOfGamesHandler: AuthRequestHandler = async (
   }
   const games = await Game.find({ userId: req.userId });
   res.status(200).json(games.length);
+};
+
+export const importLibraryHandler: AuthRequestHandler = async (req, res) => {
+  try {
+    const inserted = await importSteamLibrary(req);
+    res.status(201).json({ insertedCount: inserted.length, games: inserted });
+  } catch (err) {
+    console.error("Error importing library:", err);
+    res.status(500).json({ error: "Error importing Steam library" });
+  }
 };
