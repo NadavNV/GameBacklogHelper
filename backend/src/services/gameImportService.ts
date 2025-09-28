@@ -1,6 +1,6 @@
 import { Game } from "../models/Game";
 import { fetchMetacriticScore } from "../services/rawgService";
-import { fetchGameLengthCategory } from "../services/gameLengthService";
+import { fetchGameLengthByName } from "./igdbService";
 import { fetchSteamLibrary } from "../services/steamService";
 import { MAX_PLAYTIME_HOURS } from "../constants/config";
 import { Types } from "mongoose";
@@ -51,13 +51,13 @@ export async function importSteamLibrary(req: AuthRequest) {
       limit(async () => {
         const [metacriticScore, length] = await Promise.all([
           fetchMetacriticScore(g.title, "PC"),
-          fetchGameLengthCategory(g.title),
+          fetchGameLengthByName(g.title),
         ]);
 
         return {
           title: g.title,
           status: "backlog",
-          length, // fetched from HLTB
+          length, // fetched from IGDB
           platform: "PC",
           metacriticScore,
           userId,
