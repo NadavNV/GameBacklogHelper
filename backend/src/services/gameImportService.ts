@@ -1,7 +1,7 @@
 import { Game } from "../models/Game";
-import { fetchMetacriticScore } from "../services/rawgService";
+import { fetchMetacriticScore } from "./rawgService";
 import { fetchGameLengthByName } from "./igdbService";
-import { fetchSteamLibrary } from "../services/steamService";
+import { fetchSteamLibrary } from "./steamService";
 import { MAX_PLAYTIME_HOURS } from "../constants/config";
 import { Types } from "mongoose";
 import pLimit from "p-limit";

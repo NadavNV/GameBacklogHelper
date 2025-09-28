@@ -1,6 +1,6 @@
 import type { Response, NextFunction } from "express";
 import { fetchMetacriticScore } from "../services/rawgService";
-import { fetchGameLengthCategory } from "../services/gameLengthService";
+import { fetchGameLengthByName } from "../services/igdbService";
 import type { IGame } from "../models/Game";
 import { Game } from "../models/Game";
 import type { AuthRequest } from "../middleware/authMiddleware";
@@ -28,7 +28,7 @@ export const addGameHandler: AuthRequestHandler = async (
 
     const [metacriticScore, length] = await Promise.all([
       fetchMetacriticScore(title, platform),
-      fetchGameLengthCategory(title),
+      fetchGameLengthByName(title),
     ]);
 
     const game = await Game.create({
