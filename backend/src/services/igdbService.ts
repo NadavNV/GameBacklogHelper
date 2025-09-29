@@ -23,7 +23,6 @@ async function requestIgdbToken(): Promise<{
   token: string;
   expiresAt: number;
 }> {
-  // TODO: Register the app with twitch
   const CLIENT_ID = process.env.TWITCH_CLIENT_ID || "";
   const CLIENT_SECRET = process.env.TWITCH_CLIENT_SECRET || "";
 

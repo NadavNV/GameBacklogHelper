@@ -1,4 +1,3 @@
-// services/steam.ts
 import axios from "axios";
 
 const STEAM_API_KEY = process.env.STEAM_API_KEY!;
